@@ -14,15 +14,23 @@
 */
 package de.berlios.jtoscana.network;
 
+import java.io.Serializable;
+
 /**
  * @author Michael Greifeneder
  */
-public class GameStartRequest {
+public class GameStartRequest implements Serializable {
 
 	private String user;
+	private int id;
 
 	public GameStartRequest(String user) {
+		this(user, -1);
+	}
+	
+	public GameStartRequest(String user, int id) {
 		this.user = user;
+		this.id = id;
 	}
 
 	/**
@@ -30,6 +38,13 @@ public class GameStartRequest {
 	 */
 	public String getUser() {
 		return user;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getId() {
+		return id;
 	}
 
 }

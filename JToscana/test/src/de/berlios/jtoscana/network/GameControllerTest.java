@@ -14,39 +14,34 @@
 */
 package de.berlios.jtoscana.network;
 
-import java.io.Serializable;
+import junit.framework.TestCase;
 
 /**
  * @author Michael Greifeneder
  */
-public class GameStartResponse implements Serializable {
+public class GameControllerTest extends TestCase {
 
-	private boolean accepted;
-	private int id;
 	/**
-	 * 
+	 * Constructor for GameControllerTest.
+	 * @param arg0
 	 */
-	public GameStartResponse(int id, boolean accepted) {
-		this.id = id;
-		this.accepted = accepted;
+	public GameControllerTest(String arg0) {
+		super(arg0);
+
 	}
 	
-	public GameStartResponse(boolean accepted) {
-		this(-1, accepted);
+	public void testTwoPlayers() {
+		GameController gc =  new GameController();
+		assertTrue(gc.register(null, "mike"));
+		assertEquals("mike", gc.getPendingUsers()[0]);
+		assertFalse(gc.register(null, "mike"));
+		assertTrue(gc.register(null, "lucy"));
+		assertEquals("lucy", gc.getPendingUsers()[1]);
+		
 	}
 
-
-	/**
-	 * @return
-	 */
-	public boolean isAccepted() {
-		return accepted;
-	}
-	/**
-	 * @return
-	 */
-	public int getId() {
-		return id;
+	public static void main(String[] args) {
+		junit.swingui.TestRunner.run(GameControllerTest.class);
 	}
 
 }

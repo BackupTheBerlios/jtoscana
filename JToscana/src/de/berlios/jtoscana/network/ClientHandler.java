@@ -37,6 +37,7 @@ public class ClientHandler implements Runnable {
 	
 	private String user;
 	private InputStream is;
+	private String message;
 	private OutputStream os;
 	private GameController controller;
 	
@@ -44,7 +45,8 @@ public class ClientHandler implements Runnable {
 	/**
 	 * 
 	 */
-	public ClientHandler(GameController controller, InputStream is, OutputStream os) {
+	public ClientHandler(String message, GameController controller, InputStream is, OutputStream os) {
+		this.message = message;
 		this.controller = controller;
 		this.is = is;
 		this.os = os;
@@ -64,39 +66,50 @@ public class ClientHandler implements Runnable {
 	
 	
 	private void handleClient() throws IOException, ClassNotFoundException{
-		ObjectInputStream ois = new ObjectInputStream(is);
 		ObjectOutputStream oos = new ObjectOutputStream(os);
-		Object o = ois.readObject();
-		if (o instanceof LoginRequest) {
-			LoginRequest lr = (LoginRequest) o;
-			user = lr.getUsername();
-			controller.register(this, user);
-			//TODO check if already name connected			
-			oos.writeObject(new LoginResponse(true, "A hello from the JToscana Server "));
-		}
-		if (o instanceof UserRequest) {
-			oos.writeObject(new UserResponse(controller.getPendingUsers()));
-		}
-		if (o instanceof GameStartRequest) {
-			GameStartRequest gsr = (GameStartRequest) o;
-			String enemy = gsr.getUser();
-			if (controller.requestGame(user, enemy) != 0) {
-				oos.writeObject(new GameStartResponse(true));
+		ObjectInputStream ois = new ObjectInputStream(is);
+		while (true) {
+			Object o = ois.readObject();
+			if (o instanceof LoginRequest) {
+				LoginRequest lr = (LoginRequest) o;
+				user = lr.getUsername();
+				if (controller.register(this, user)) {
+					oos.writeObject(new LoginResponse(true, message));
+				}
+				else {
+					oos.writeObject(new LoginResponse(false, "Already user with same name connected"));
+				}
 			}
-		}
-		if (o instanceof BoardRequest) {
-			BoardRequest br = (BoardRequest) o;
-			int id = br.getIdOfGame();
-			Board board = controller.getGameById(id).getBoard();
-			oos.writeObject(new BoardResponse(board));
-		}
-		if (o instanceof StatusRequest) {
-			oos.writeObject(getResponse());
-		}
-		if (o instanceof GameStartResponse) {
-			synchronized (this) {
-				answer = o;
-				notifyAll();
+			if (o instanceof UserRequest) {
+				oos.writeObject(new UserResponse(controller.getPendingUsers()));
+			}
+			if (o instanceof GameStartRequest) {
+				GameStartRequest gsr = (GameStartRequest) o;
+				String enemy = gsr.getUser();
+				int id = controller.requestGame(user, enemy); 
+				if (id  != -1) {
+					oos.writeObject(new GameStartResponse(id, true));
+				}
+				else {
+					oos.writeObject(new GameStartResponse(-1, false));
+				}
+			}
+			if (o instanceof BoardRequest) {
+				BoardRequest br = (BoardRequest) o;
+				int id = br.getIdOfGame();
+				Board board = controller.getGameById(id).getBoard();
+				oos.writeObject(new BoardResponse(board));
+			}
+			if (o instanceof StatusRequest) {
+				oos.writeObject(getResponse());
+			}
+			if (o instanceof GameStartResponse) {
+				GameStartResponse gsr =  (GameStartResponse)o;
+				synchronized (this) {
+					answer = o;
+					notifyAll();
+				}
+				oos.writeObject(new EmptyResponse());
 			}
 		}
 	}

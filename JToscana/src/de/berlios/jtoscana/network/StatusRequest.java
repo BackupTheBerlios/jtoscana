@@ -14,10 +14,12 @@
 */
 package de.berlios.jtoscana.network;
 
+import java.io.Serializable;
+
 /**
  * @author Michael Greifeneder
  */
-public class StatusRequest {
+public class StatusRequest implements Serializable{
 
 	/**
 	 * 

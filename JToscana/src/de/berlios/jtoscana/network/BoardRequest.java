@@ -14,10 +14,12 @@
 */
 package de.berlios.jtoscana.network;
 
+import java.io.Serializable;
+
 /**
  * @author Michael Greifeneder
  */
-public class BoardRequest {
+public class BoardRequest implements Serializable {
 
 	private int idOfGame;
 	/**

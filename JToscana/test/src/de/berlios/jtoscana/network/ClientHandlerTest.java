@@ -14,39 +14,38 @@
 */
 package de.berlios.jtoscana.network;
 
-import java.io.Serializable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+
+import junit.framework.TestCase;
 
 /**
  * @author Michael Greifeneder
  */
-public class GameStartResponse implements Serializable {
+public class ClientHandlerTest extends TestCase {
 
-	private boolean accepted;
-	private int id;
 	/**
-	 * 
+	 * Constructor for ClientHandlerTest.
+	 * @param arg0
 	 */
-	public GameStartResponse(int id, boolean accepted) {
-		this.id = id;
-		this.accepted = accepted;
+	public ClientHandlerTest(String arg0) {
+		super(arg0);
 	}
 	
-	public GameStartResponse(boolean accepted) {
-		this(-1, accepted);
+	public void testPendingUsers() {
+		/*
+		ByteArrayOutputStream tos = new ByteArrayOutputStream();
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+		ClientHandler h = new ClientHandler("", new GameController(), bis, bos);
+		*/
 	}
 
-
-	/**
-	 * @return
-	 */
-	public boolean isAccepted() {
-		return accepted;
-	}
-	/**
-	 * @return
-	 */
-	public int getId() {
-		return id;
+	public static void main(String[] args) {
+		junit.swingui.TestRunner.run(ClientHandlerTest.class);
 	}
 
 }

@@ -1,3 +1,7 @@
+package de.berlios.jtoscana;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 /** 
    This file is part of JToscana.
     JToscana is free software; you can redistribute it and/or modify
@@ -10,43 +14,26 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with Foobar; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USApackage de.berlios.jtoscana.network;
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-package de.berlios.jtoscana.network;
-
-import java.io.Serializable;
 
 /**
  * @author Michael Greifeneder
  */
-public class GameStartResponse implements Serializable {
+public class AllTests {
 
-	private boolean accepted;
-	private int id;
-	/**
-	 * 
-	 */
-	public GameStartResponse(int id, boolean accepted) {
-		this.id = id;
-		this.accepted = accepted;
-	}
-	
-	public GameStartResponse(boolean accepted) {
-		this(-1, accepted);
+	public static void main(String[] args) {
+		junit.swingui.TestRunner.run(AllTests.class);
 	}
 
+	public static Test suite() {
+		TestSuite suite = new TestSuite("Test for default package");
+		
+		suite.addTest(de.berlios.jtoscana.model.AllTests.suite());
+		suite.addTest(de.berlios.jtoscana.network.AllTests.suite());
+		//$JUnit-BEGIN$
 
-	/**
-	 * @return
-	 */
-	public boolean isAccepted() {
-		return accepted;
+		//$JUnit-END$
+		return suite;
 	}
-	/**
-	 * @return
-	 */
-	public int getId() {
-		return id;
-	}
-
 }

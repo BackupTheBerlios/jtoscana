@@ -52,21 +52,32 @@ public class GameController {
 	
 	public int requestGame(String requester, String enemy) {
 		ClientHandler h = (ClientHandler)  handlerByUser.get(enemy);
-		Object o = h.addResponseAndWait(new GameStartRequest(requester));
+		int id = getNextGame(requester, enemy);
+		Object o = h.addResponseAndWait(new GameStartRequest(requester, id));
 		if (o instanceof GameStartResponse) {
 			GameStartResponse gsr =  (GameStartResponse) o;
 			if (gsr.isAccepted()) {
-				return getNextGame(requester, enemy);				
+				return id;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	
 	private HashMap handlerByUser = new HashMap();
 	private ArrayList pendingUsers = new ArrayList();
 	
-	public void register(ClientHandler h, String user) {
+	/**
+	 * @param h ClientHandler for user
+	 * @param user username
+	 * @return
+	 */
+	public boolean register(ClientHandler h, String user) {
+		if (handlerByUser.containsKey(user)) {
+			return false;
+		}
 		handlerByUser.put(user, h);
+		pendingUsers.add(user);
+		return true;
 	}
 	public String[] getPendingUsers() {
 		return (String[]) pendingUsers.toArray(new String[pendingUsers.size()]);

@@ -14,6 +14,8 @@
 */
 package de.berlios.jtoscana.network;
 
+import java.io.Serializable;
+
 
 /**
  * @author mike
@@ -21,7 +23,7 @@ package de.berlios.jtoscana.network;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class UserResponse {
+public class UserResponse implements Serializable {
 	private String[] users;
 	public UserResponse(String[] users) {
 		this.users = users;

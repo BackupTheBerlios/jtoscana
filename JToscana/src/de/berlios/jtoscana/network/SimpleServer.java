@@ -17,6 +17,8 @@ package de.berlios.jtoscana.network;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author mike
  *
@@ -24,28 +26,64 @@ import java.net.Socket;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class SimpleServer implements Runnable {
-
+	private static final Logger logger = Logger.getLogger(SimpleServer.class);
 	private GameController gc = new GameController();
 	private int port;
+	
+	private ServerSocket serverSocket;
+	private String message;
+	private boolean finished = false;
+	
 	/**
 	 * 
 	 */
-	public SimpleServer(int port) {
+	public SimpleServer(int port, String message) {
 		this.port = port;
+		this.message = message;
 	}
-
+	
+	public SimpleServer(int port) {
+			this(port, "A hello from the JToscana Server ");
+	}
+	
+	
 	public void run()  {
 		try {
-			ServerSocket server = new ServerSocket(port);
+			serverSocket = new ServerSocket(port);
 		
 			while(true) {
-				Socket s = server.accept();
-				ClientHandler h = new ClientHandler(gc, s.getInputStream(), s.getOutputStream());
+				Socket s = serverSocket.accept();
+				ClientHandler h = new ClientHandler(message, gc, s.getInputStream(), s.getOutputStream());
 				h.start();
 			}
 			
+			
 		} catch (Throwable t) {
-			// TODO: handle exception
+			logger.error("Server finished with error", t);
+		}
+		synchronized(this) {
+			finished = true;
+			notifyAll();
+		}
+	}
+	
+	public void start() {
+		new Thread(this).start();
+	}
+	
+	public void stop() {
+		try {
+			serverSocket.close();
+		} catch (Exception e) {
+			logger.warn("Stopping server failed");			
+		}
+		synchronized(this) {
+			while (! finished) {
+			  try {
+					wait();
+				} catch (Exception e) {
+				}	
+			}
 		}
 	}
 

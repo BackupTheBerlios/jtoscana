@@ -1,3 +1,6 @@
+package de.berlios.jtoscana;
+import org.apache.log4j.BasicConfigurator;
+
 /** 
    This file is part of JToscana.
     JToscana is free software; you can redistribute it and/or modify
@@ -10,43 +13,19 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with Foobar; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USApackage de.berlios.jtoscana.network;
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-package de.berlios.jtoscana.network;
-
-import java.io.Serializable;
 
 /**
  * @author Michael Greifeneder
  */
-public class GameStartResponse implements Serializable {
+public class Log4j {
 
-	private boolean accepted;
-	private int id;
-	/**
-	 * 
-	 */
-	public GameStartResponse(int id, boolean accepted) {
-		this.id = id;
-		this.accepted = accepted;
-	}
-	
-	public GameStartResponse(boolean accepted) {
-		this(-1, accepted);
-	}
-
-
-	/**
-	 * @return
-	 */
-	public boolean isAccepted() {
-		return accepted;
-	}
-	/**
-	 * @return
-	 */
-	public int getId() {
-		return id;
+	private static boolean isConfigured = false; 
+	public static void init() {
+		if (!isConfigured) {
+			BasicConfigurator.configure();
+		}
 	}
 
 }

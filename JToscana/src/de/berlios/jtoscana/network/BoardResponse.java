@@ -14,12 +14,14 @@
 */
 package de.berlios.jtoscana.network;
 
+import java.io.Serializable;
+
 import de.berlios.jtoscana.model.Board;
 
 /**
  * @author Michael Greifeneder
  */
-public class BoardResponse {
+public class BoardResponse implements Serializable {
 
 	private Board board;
 	/**

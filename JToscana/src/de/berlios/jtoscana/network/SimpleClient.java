@@ -40,7 +40,7 @@ public class SimpleClient  {
 	/* (non-Javadoc)
 	 * @see de.berlios.jtoscana.network.Client#connect(java.lang.String, int)
 	 */
-	public void connect(String host, int port, String username)  throws IOException {
+	public void connect(String host, int port)  throws IOException {
 		socket = new Socket(host, port);
 		is = new ObjectInputStream(socket.getInputStream());
 		os = new ObjectOutputStream(socket.getOutputStream());
@@ -100,13 +100,32 @@ public class SimpleClient  {
 			throw new ServerException("Not a BoardResponse - get: " + o.getClass().getName());
 	}
 
-	public int waitForGame() throws IOException, ClassNotFoundException {
-		os.writeObject(new StatusRequest());
-		Object o = is.readObject();
-		if (o instanceof EmptyResponse) {
-			//do nothing
-		}
-		return 0;
+	private int gameId;
+	
+	public String waitForGame() throws IOException, ClassNotFoundException, ServerException {
+		while(true) {
+			os.writeObject(new StatusRequest());
+			Object o = is.readObject();
+			if (o instanceof EmptyResponse) {
+				continue;
+			}
+			if (o instanceof GameStartRequest) {
+				GameStartRequest gsr = (GameStartRequest) o;
+				gameId = gsr.getId();
+				return gsr.getUser();
+			}
+			throw new ServerException("Not a Empty or GameStart Anser - get: " + o.getClass().getName());
+		}		
+	}
+	
+	public void accept() throws IOException, ClassNotFoundException {
+		os.writeObject(new GameStartResponse(gameId, true));
+		is.readObject();
+	}
+	
+	public void refused() throws IOException, ClassNotFoundException  {
+		os.writeObject(new GameStartResponse(gameId, false));
+		is.readObject();
 	}
 
 	/* (non-Javadoc)
